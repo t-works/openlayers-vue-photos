@@ -2,7 +2,7 @@ import View from 'ol/View'
 import OlMap from 'ol/Map'
 import TileLayer from 'ol/layer/Tile'
 import OSM from 'ol/source/OSM'
-import {toLonLat} from 'ol/proj';
+import {Projection, toLonLat} from 'ol/proj';
 import VectorSource from 'ol/source/Vector'
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
 // importing the OpenLayers stylesheet is required for having
@@ -20,6 +20,7 @@ export default class JMap {
     protected _map?: OlMap// = new OlMap({})
     protected _vectorSource =   new VectorSource();
     private _controls: MapControls | false;
+
     constructor() {
         this._controls = false;
         // this._controls = new MapControls(this._vectorSource, this._map);
@@ -63,26 +64,9 @@ export default class JMap {
             zoom: 4,
           }),
         });
-        //
-        // this._map.addLayer(tileLayer);
-        // this._map.addLayer(geometryLayer);
-        // this._map.setTarget(target);
-        // this._map.setView(view0);
-        // const modify = new Modify({source: this._vectorSource});
-        // this._map.addInteraction(modify);
-        // const modify = new Modify({source: this._vectorSource});
-        // this._map.addInteraction(modify);
-        // const draw = new Draw({
-        //     source: this._vectorSource,
-        //     type: 'Point',
-        // });
-        // this._map.addInteraction(draw);
-        // const snap = new Snap({source: this._vectorSource});
-        // this._map.addInteraction(snap);
-
-        // this.initControls();
-
-
+        this._map.getView().on('change:center',(evt)=>{
+            // console.log(evt)
+        })
     }
     initControls(): MapControls | false{
         if(!this._controls && this._map){
@@ -127,8 +111,23 @@ export default class JMap {
             this._map.addControl(control);
         }
     }
+    getMap(): OlMap | false{
+        if(this._map){
+            return this._map;
+        }
+        return false;
+    }
+    getProjection(): Projection | false{
+        if( this._map){
+            return this._map.getView().getProjection();
+        }
+        return false;
+    }
+    getCenter(): number[]{
+        if(this._map){
+            return this._map.getView().getCenter();
+        }
+        return [0,0];
+    }
 
-    // addDot(): void{
-    //
-    // }
 }

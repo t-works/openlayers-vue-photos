@@ -9,7 +9,14 @@
     <div class="cell cell-inspect">
       <inspect></inspect>
     </div>
-
+<popup :is-visible="visibleAddPointPopup">
+  sdfsd
+  <div class="actions">
+    <button class="secondary" @click="visibleAddPointPopup=false">Cancel</button>
+    <button class="primary">OK</button>
+  </div>
+</popup>
+  <OnCreateLocationPopup></OnCreateLocationPopup>
 </template>
 
 <script lang="ts">
@@ -25,32 +32,30 @@ import {defineComponent, reactive, provide} from "vue";
 import JMap from "@/Models/Map/JMap";
 import MapContainer from "@/components/MapContainer.vue";
 import {CallbackObjectInterface} from "@/Models/Map/Controls/MapControls";
+import Popup from "@/components/UXwidgets/Popup.vue";
 
-// const geometryLayer = new VectorLayer({
-//   source: new VectorSource({})
-// })
-// const view = new View({
-//   zoom: 0,
-//   center: [0, 0],
-//   constrainResolution: true,
-//
-// })
+import {LocationsKey, MapKey} from "@/symbols";
+import {LocationList} from "@/Models/Locations/LocationList";
+import OnCreateLocationPopup from "@/components/Modals/OnCreateLocation.vue";
+
 const App = defineComponent({
   name: 'App',
-  components: {MapContainer, Inspect, },
+  data(){
+    return {
+      visibleAddPointPopup:true
+    }
+  },
+  components: {OnCreateLocationPopup, Popup, MapContainer, Inspect, },
   setup(){
     const store = useStore();
     const objJMap = reactive(new JMap());
     const initMap = (mapElement: HTMLElement) =>{
       objJMap.init(mapElement);
     }
-    const subscribeToControlEvent = (payload: CallbackObjectInterface) =>{
-      objJMap.getMapControls().subscribe(payload);
-    }
-    provide("map", objJMap);
+    const locations = reactive(new LocationList())
+    provide(MapKey, objJMap);
+    provide(LocationsKey, locations);
     provide("initMap", initMap);
-    provide("subscribeToControlEvent", subscribeToControlEvent);
-
     return {
       store,
       objJMap
@@ -75,7 +80,6 @@ const App = defineComponent({
       console.log(this);
       console.log(evt.map.getCoordinateFromPixel(evt.pixel));
       console.log(evt.map.getView().getProjection());
-
       console.log(toLonLat(evt.coordinate,'EPSG:3857'));
     }
   }
@@ -86,17 +90,19 @@ export default App;
 <style>
 html, body {
   height: 100%;
+  width:100%;
   margin: 0;
 }
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   height: 100%;
+  width:100%;
   display: grid;
-  grid-template-columns: 100vh;
+  grid-template-columns: calc(70% - 1rem) 30%;
   grid-auto-rows: 1fr;
   grid-gap: 1rem;
-  padding: 1rem;
+  /*padding: 1rem;*/
   box-sizing: border-box;
 }
 

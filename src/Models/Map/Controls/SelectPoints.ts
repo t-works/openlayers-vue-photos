@@ -8,6 +8,12 @@ import Map from "ol/Map";
 import {Draw, Modify, Select, Snap} from "ol/interaction";
 import VectorSource from "ol/source/Vector";
 import {click} from "ol/events/condition";
+import {CreateLocation} from "@/Models/Map/Events/EventTypes/CreateLocation";
+import {InteractionEvent} from "@/Models/Map/Events/InteractionEvent";
+import BaseEvent from "ol/events/Event";
+import {SelectEvent} from "ol/interaction/Select";
+import {Feature} from "ol";
+import {SelectLocation} from "@/Models/Map/Events/EventTypes/SelectLocation";
 
 
 
@@ -47,10 +53,13 @@ export default class SelectPoints extends JControl{
             condition: click,
         });
         this._interactions.push(selectClick);
-        selectClick.on('select',(e)=>{
+        selectClick.on('select',(e: SelectEvent)=>{
             console.log('on select')
             console.log(e)
-            this._mapControls.onInteraction('select',e);
+            console.log(e.selected);
+            const features: Feature<any>[] =e.selected;
+            const interactionEvent: SelectLocation = new SelectLocation(e, features);
+            this._mapControls.onInteraction('select',interactionEvent);
         })
 
     }

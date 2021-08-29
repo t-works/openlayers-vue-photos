@@ -2,15 +2,12 @@
 <div>
   {{ featureString }}
 </div>
-<div>
-  {{ mapCenter }}
-</div>
 
 
 </template>
 
 <script lang="ts">
-import {defineComponent, inject, ref, watch } from "vue";
+import {defineComponent, inject, ref} from "vue";
 import {mapMapper} from "@/store/modules/map";
 import MapControls, {CallbackFnInterface, CallbackObjectInterface} from "@/Models/Map/Controls/MapControls";
 import BaseEvent from "ol/events/Event";
@@ -24,9 +21,6 @@ import {Feature} from "ol";
 import {SelectEvent} from "ol/interaction/Select";
 import {LocationList} from "@/Models/Locations/LocationList";
 import {FeatureWrapper} from "@/Models/Locations/FeatureWrapper";
-import {Projection} from "ol/proj";
-import OlMap from "ol/Map";
-import View from "ol/View";
 
 type GreetFunction<T> = (a: T) => void;
 const Inspect = defineComponent({
@@ -34,14 +28,24 @@ const Inspect = defineComponent({
   data(){
     return {
       visibleAddPointPopup: false,
-      view: {} as View,
-      centerData: [0,0]
+
     }
   },
   setup(){
     const objJMap = inject(MapKey);
     const locations = inject(LocationsKey);
     const features = ref([] as Feature<any>[]); //ref<
+    const onNewFeature = (feature: Feature<any>)=> {
+      features.value.push(feature);
+    }
+
+    const updateFeatureName = (name: string)=>{
+
+      // (features[0] as Feature<any>).setProperties('')
+      let value: any = (features.value[0] as Feature<any>).getProperties();
+
+      // (features.value[0] as Feature<any>).setProperties('jprops', value: any)
+    }
     const onLoadFeature= (feature: Feature<any>)=>{
       features.value.push(feature);
     }
@@ -58,19 +62,7 @@ const Inspect = defineComponent({
     mapControls(): MapControls{
       return this.objJMap.getMapControls();
     },
-    mapCenter(): string{
-      if(this.objJMap.getMap()){
-        console.log('projection')
-        console.log((this.objJMap.getProjection() as Projection).getExtent());
-        console.log(((this.objJMap as JMap).getMap() as OlMap).getView().getCenter());
-        // const center = ((this.objJMap as JMap).getMap() as OlMap).getView().getCenter();
-        console.log(((this.objJMap as JMap).getMap() as OlMap).getView().getZoom());
-        // return (this.objJMap.getProjection() as Projection).getExtent().toString();
-        // return center[0] + "," + center[1];
-        return this.centerData[0] + "," + this.centerData[1];
-      }
-      return ''
-    },
+
     featureString(): string{
       const features = this.objJMap.getFeatures()
       console.log('features');
@@ -92,12 +84,6 @@ const Inspect = defineComponent({
     }
   },
   mounted() {
-    this.centerData = ((this.objJMap as JMap).getMap() as OlMap).getView().getCenter();
-    ((this.objJMap as JMap).getMap() as OlMap).getView().on('change:center',(evt)=>{
-      console.log(evt)
-      console.log(evt.target)
-      this.centerData = (evt.target as View).getCenter()
-    });
     // this.mapControls.subscribe("select",this.onSelectFeature,this)
     const subscribePayload: CallbackObjectInterface<'select'> = {
       callback: this.onSelect,

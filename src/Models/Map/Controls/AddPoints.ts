@@ -5,6 +5,9 @@ import {Draw, Modify, Snap} from "ol/interaction";
 import VectorSource from "ol/source/Vector";
 import {DrawEvent} from "ol/interaction/Draw";
 import { v4 as uuidv4 } from 'uuid';
+import {InteractionEvent} from "@/Models/Map/Events/InteractionEvent";
+import {Feature} from "ol";
+import {CreateLocation} from "@/Models/Map/Events/EventTypes/CreateLocation";
 
 
 
@@ -84,5 +87,7 @@ export default class AddPoints extends JControl{
         feature.setId(uuidv4());
         feature.set('jprops',{name: 'test name'})
         console.log(feature.getProperties())
+        const interactionEvent: CreateLocation = new InteractionEvent(evt, feature);
+        this._mapControls.onInteraction('onCreateLocation', interactionEvent); // {feature: feature}
     }
 }

@@ -1,0 +1,35 @@
+.font{
+  .size1{
+    font-size: 0.5rem;
+  }
+  .size2{
+    font-size: 0.75rem;
+  }
+  .size3{
+    font-size: 1rem;
+  }
+}
+button{
+  border-style: solid;
+  border-right-width: 4px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+  border-bottom-width: 4px;
+  border-radius: 2px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  &.primary{
+    background-color: #0f684e;
+    color: white;
+    border-color: #128362;
+  }
+  &.secondary{
+
+  }
+}
+.actions{
+  text-align: center;
+  padding-top: 1rem;
+}
